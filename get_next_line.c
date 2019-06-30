@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/30 14:16:24 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/06/30 14:19:00 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int main()
 	//printf("%d\n", get_next_line(i, &txt));
 	printf("%s\n", txt);
 	get_next_line(i, &txt);
-	get_next_line(i, &txt);
+//	get_next_line(i, &txt);
 	//printf("%d\n", get_next_line(i, &txt));
 	return (0);
 }
