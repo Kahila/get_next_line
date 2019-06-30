@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/30 13:21:29 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/06/30 14:14:54 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ size_t			find_line(char *str)
 	size_t count;
 
 	count = 0;
-	while (str[count] != '\0')
+	while (str[count] != '\n')
 		count++;
 	return (count);
 }
@@ -32,6 +32,7 @@ int			get_next_line(const int fd, char **line)
 	size_t j;
 
 	i = 0;
+	line = (char **)malloc(sizeof(char *));
 	temp = ft_strnew(BUFF_SIZE);
 	buff = ft_strnew(BUFF_SIZE);
 	read(fd, buff, BUFF_SIZE);
@@ -46,7 +47,10 @@ int			get_next_line(const int fd, char **line)
 		}
 		i++;
 	}
-	printf("%s\n", temp);
+	j = find_line(temp);
+	*line = ft_memalloc(sizeof(char) * j + 1);
+	ft_strncpy(*line, temp, j);
+	printf("%s\n", *line);
 	return (1);
 }
 
@@ -57,7 +61,10 @@ int main()
 	int i;
 	
 	i = open("file.txt", O_RDONLY);
-	printf("%d\n", get_next_line(i, &txt));
+	//printf("%d\n", get_next_line(i, &txt));
+	printf("%s\n", txt);
+	get_next_line(i, &txt);
+	get_next_line(i, &txt);
 	//printf("%d\n", get_next_line(i, &txt));
 	return (0);
 }
