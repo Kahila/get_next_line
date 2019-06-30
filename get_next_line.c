@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/30 14:14:54 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/06/30 14:16:24 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ int			get_next_line(const int fd, char **line)
 	*line = ft_memalloc(sizeof(char) * j + 1);
 	ft_strncpy(*line, temp, j);
 	printf("%s\n", *line);
+	free(buff);
 	return (1);
 }
 
