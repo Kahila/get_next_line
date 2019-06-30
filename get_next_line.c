@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/30 13:18:13 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/06/30 13:21:29 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,29 +24,29 @@ size_t			find_line(char *str)
 	return (count);
 }
 
-int			get_next_line(const int fd, char **temp)
+int			get_next_line(const int fd, char **line)
 {
-	//char *temp;
+	char *temp;
 	char *buff;
 	size_t i;
 	size_t j;
 
 	i = 0;
-	*temp = ft_strnew(BUFF_SIZE);
+	temp = ft_strnew(BUFF_SIZE);
 	buff = ft_strnew(BUFF_SIZE);
 	read(fd, buff, BUFF_SIZE);
-	*temp = ft_strjoin(*temp, buff);
+	temp = ft_strjoin(temp, buff);
 	while (buff[i] != '\n')
 	{
 		if (i == BUFF_SIZE)
 		{
 			i = -1;
 			read(fd, buff, BUFF_SIZE);
-			*temp = ft_strjoin(*temp, buff);
+			temp = ft_strjoin(temp, buff);
 		}
 		i++;
 	}
-	printf("%s\n", *temp);
+	printf("%s\n", temp);
 	return (1);
 }
 
