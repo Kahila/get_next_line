@@ -6,68 +6,47 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/29 05:01:44 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/06/30 13:18:13 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-char			*ft_realloc(char *str, char *temp)
-{
-	char *new;
 
-	new = ft_strjoin(str, temp);
-	ft_strdel(&temp);
-	//free(str);
-	return (new);
+size_t			find_line(char *str)
+{
+	size_t count;
+
+	count = 0;
+	while (str[count] != '\0')
+		count++;
+	return (count);
 }
 
-#include <stdlib.h>
-
-int			get_next_line(const int fd, char **line)
+int			get_next_line(const int fd, char **temp)
 {
-	static char *temp;
+	//char *temp;
+	char *buff;
 	size_t i;
 	size_t j;
-	
-	i = 0;
-	j = 0;
-	line = (char **)malloc(sizeof(char *) * 1 + 1);
-	temp = ft_memalloc(BUFF_SIZE);
-	read(fd, temp, BUFF_SIZE);
-	*line = (char *)malloc(sizeof(char) * BUFF_SIZE + 1);
-	ft_strcpy(*line, temp);
-	while (line[0][i] != '\0')
-	{
-		///continiue from here
-		while (temp != '\0')
-		{
-			if (temp == )
-		}
-		
-		i++;
-	}
-	if (j == 0)
-		read(fd, temp, BUFF_SIZE);
 
-	//read(fd, temp, BUFF_SIZE);
-	*line = ft_realloc(*line, temp);
-	/*while (temp[i] != '\n')
+	i = 0;
+	*temp = ft_strnew(BUFF_SIZE);
+	buff = ft_strnew(BUFF_SIZE);
+	read(fd, buff, BUFF_SIZE);
+	*temp = ft_strjoin(*temp, buff);
+	while (buff[i] != '\n')
 	{
-		*line[j] = temp[i];
-		i++;
-		j++;
 		if (i == BUFF_SIZE)
 		{
-			i = 0;
-			read(fd, temp, BUFF_SIZE);
-			if (!(realloc(line[0], BUFF_SIZE)))
-				exit(INVALID);
-			ft_strcat(line[0], temp);
+			i = -1;
+			read(fd, buff, BUFF_SIZE);
+			*temp = ft_strjoin(*temp, buff);
 		}
-	}*/
-	printf("%s\n", *line);
+		i++;
+	}
+	printf("%s\n", *temp);
 	return (1);
 }
 
