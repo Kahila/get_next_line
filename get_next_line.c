@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/01 16:55:26 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/03 15:22:39 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,26 +26,32 @@ int			get_next_line(const int fd, char **line)
 
 	i = 0;
 	line = (char **)malloc(sizeof(char*) * 1);
-	//printf(">>>>>>>>>>>>>>>>>>>>>>>>|%s|<<<<<<<<<<<<<<<<<<<<<<\n", temp);
 	if (j > 0){
-		*line = (char *)malloc(sizeof(char ) * j);
 		new = ft_memalloc(sizeof(char) * j);
-	}
-	//j = ft_strlen(temp) - j;
-	//while(temp[])
-	if (j > 0)
-	{
 		s = ft_strlen(temp) - j;
+		f = s;	
 		while (temp[s] != '\0' && i != j)
 		{
+			if (temp[s] == '\n')
+			{
+				*line = ft_memalloc(sizeof(char) * i);
+				*line = ft_strncpy(*line, new, i - 1);
+				printf("%s\n", *line);
+				j--;
+				return (1);
+			}
 			new[i] = temp[s];
-		//	printf("_______________|%s|_______________", new);
 			s++;
+			j--;
 			i++;
-
 		}
-		//printf("\n");
-		
+		s = f;
+		*line = (char *)malloc(sizeof(char) * (i + j));
+		while (temp[s] != '\0' && t != j)
+		{
+			line[0][t] = new[t];
+			t++;
+		}
 	}
 	i = 0;
 	temp = ft_strnew(BUFF_SIZE);
@@ -72,29 +78,12 @@ int			get_next_line(const int fd, char **line)
 		i++;
 	i++;
 
-	if (j > 0)
-	{
-		s = ft_strlen(temp) - j;
-		*line = (char *)malloc(sizeof(char) * (i + j));
-		while (temp[s] != '\0' && t != j)
-		{
-		//	*line = (char *)malloc(sizeof(char) * (i + j))
-			line[0][t] = new[t];
-		//	printf("_______________|%c|_______________", new[t]);
-			//s++;
-			t++;
-
-		}
-	}
-	else
+	if(j == 0)
 		*line = (char *)malloc(sizeof(char) * i);
-	//printf("%s<<<<<<<<<<<<<<", new);
-	*line = ft_strncat(*line, temp, i);
-//	printf("%d\n", f);
+	*line = ft_strncat(*line, temp, i - 1);
 	printf("%s\n", *line);
 	free(*line);
 	j = ft_strlen(temp) - i;
-//	printf("%d\n", j);
 	return (1);
 }
 
@@ -103,13 +92,12 @@ int main()
 {
 	char *txt;
 	int i;
+	int j = 0;
 	
-	i = open("file.txt", O_RDONLY);
-	//printf("%d\n", get_next_line(i, &txt));
-	//printf("%s\n", txt);
-	get_next_line(i, &txt);
-	get_next_line(i, &txt);
-	//get_next_line(i, &txt);
-	//printf("%d\n", get_next_line(i, &txt));
+	i = open("bible.txt", O_RDONLY);
+	while (i > 0)
+	{
+		get_next_line(i, &txt);
+	}
 	return (0);
 }
