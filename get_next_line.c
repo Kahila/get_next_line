@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/03 16:47:10 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/04 04:30:02 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int			get_next_line(const int fd, char **line)
 				*line = ft_strncpy(*line, new, i - 1);
 				printf("%s\n", *line);
 				var.j--;
+                free(new);
 				return (1);
 			}
 			new[i] = var.temp[s];
@@ -70,7 +71,12 @@ int			get_next_line(const int fd, char **line)
 		{
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
+            {
+                free(buff);
+                free(new);
+                free(var.temp);
 				return (0);
+            }
 			var.temp = ft_strjoin(var.temp, buff);
 			i = -1;
 		}
@@ -98,15 +104,16 @@ int			get_next_line(const int fd, char **line)
 #include <fcntl.h>
 int main()
 {
-	char *txt;
+	char **txt;
 	int i;
 	int x = 1;
 	int j = 0;
 	
-	i = open("file.txt", O_RDONLY);
+	i = open("bible.txt", O_RDONLY);
 	while (x > 0)
 	{
-		x = get_next_line(i, &txt);
+		x = get_next_line(i, txt);
 	}
+    free(txt);
 	return (0);
 }
