@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/04 04:30:02 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/05 11:40:13 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@ int			get_next_line(const int fd, char **line)
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
             {
-                free(buff);
-                free(new);
-                free(var.temp);
+                //free(buff);
+                //free(new);
+                //free(var.temp);
 				return (0);
             }
 			var.temp = ft_strjoin(var.temp, buff);
@@ -97,7 +97,6 @@ int			get_next_line(const int fd, char **line)
 	printf("%s\n", *line);
 	free(line);
 	var.j = ft_strlen(var.temp) - i;
-	//free(&var.temp);
 	return (1);
 }
 
