@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/05 11:40:13 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/06 13:56:31 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 int			get_next_line(const int fd, char **line)
 {
 	static t_var var;
-	char *buff;
+	char buff[BUFF_SIZE + 1];
 	char *new;
 	size_t i;
 	int t = 0;
@@ -24,7 +24,7 @@ int			get_next_line(const int fd, char **line)
 	int s = 0;
 
 	i = 0;
-	line = (char **)malloc(sizeof(char*) * 1);
+    ft_bzero(buff, BUFF_SIZE + 1);
 	if (var.j > 0){
 		new = ft_memalloc(sizeof(char) * var.j);
 		
@@ -36,9 +36,7 @@ int			get_next_line(const int fd, char **line)
 			{
 				*line = ft_memalloc(sizeof(char) * i);
 				*line = ft_strncpy(*line, new, i - 1);
-				printf("%s\n", *line);
 				var.j--;
-                free(new);
 				return (1);
 			}
 			new[i] = var.temp[s];
@@ -56,7 +54,6 @@ int			get_next_line(const int fd, char **line)
 	}
 	i = 0;
 	var.temp = ft_strnew(BUFF_SIZE);
-	buff = ft_strnew(BUFF_SIZE);
 	f = read(fd, buff, BUFF_SIZE);
 	if (f == 0)
 		return (0);
@@ -72,9 +69,6 @@ int			get_next_line(const int fd, char **line)
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
             {
-                //free(buff);
-                //free(new);
-                //free(var.temp);
 				return (0);
             }
 			var.temp = ft_strjoin(var.temp, buff);
@@ -94,8 +88,6 @@ int			get_next_line(const int fd, char **line)
 	if(var.j == 0)
 		*line = (char *)malloc(sizeof(char) * i);
 	*line = ft_strncat(*line, var.temp, i - 1);
-	printf("%s\n", *line);
-	free(line);
 	var.j = ft_strlen(var.temp) - i;
 	return (1);
 }
@@ -103,7 +95,7 @@ int			get_next_line(const int fd, char **line)
 #include <fcntl.h>
 int main()
 {
-	char **txt;
+	char *txt;
 	int i;
 	int x = 1;
 	int j = 0;
@@ -111,8 +103,9 @@ int main()
 	i = open("bible.txt", O_RDONLY);
 	while (x > 0)
 	{
-		x = get_next_line(i, txt);
+		x = get_next_line(i, &txt);
+        printf("%s\n", txt);
 	}
-    free(txt);
+   // free(txt);
 	return (0);
 }
