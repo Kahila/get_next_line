@@ -6,19 +6,18 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/06 13:56:31 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/06 16:53:48 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 int			get_next_line(const int fd, char **line)
 {
 	static t_var var;
 	char buff[BUFF_SIZE + 1];
 	char *new;
-	size_t i;
+	int i;
 	int t = 0;
  	int f = 0;
 	int s = 0;
@@ -27,6 +26,8 @@ int			get_next_line(const int fd, char **line)
     ft_bzero(buff, BUFF_SIZE + 1);
 	if (var.j > 0){
 		new = ft_memalloc(sizeof(char) * var.j);
+        if (!new)
+            return (-1);
 		
 		s = ft_strlen(var.temp) - var.j;
 		f = s;	
@@ -34,7 +35,8 @@ int			get_next_line(const int fd, char **line)
 		{
 			if (var.temp[s] == '\n')
 			{
-				*line = ft_memalloc(sizeof(char) * i);
+				if(!(*line = ft_memalloc(sizeof(char) * i)))
+                    return (-1);
 				*line = ft_strncpy(*line, new, i - 1);
 				var.j--;
 				return (1);
@@ -45,7 +47,8 @@ int			get_next_line(const int fd, char **line)
 			i++;
 		}
 		s = f;
-		*line = (char *)malloc(sizeof(char) * (i + var.j));
+		if(!(*line = (char *)malloc(sizeof(char) * (i + var.j))))
+            return (-1);
 		while (var.temp[s] != '\0' && t != var.j)
 		{
 			line[0][t] = new[t];
@@ -92,8 +95,9 @@ int			get_next_line(const int fd, char **line)
 	return (1);
 }
 
+#include <stdio.h>
 #include <fcntl.h>
-int main()
+/*int main()
 {
 	char *txt;
 	int i;
@@ -101,11 +105,26 @@ int main()
 	int j = 0;
 	
 	i = open("bible.txt", O_RDONLY);
-	while (x > 0)
+//	while (j < 10)
 	{
-		x = get_next_line(i, &txt);
-        printf("%s\n", txt);
+		x = get_next_line(1, &txt);
+        printf("%x\n", x);
+        j++;
 	}
    // free(txt);
 	return (0);
+}*/
+int		main(int argc, char **argv)
+{
+	int		fd;
+	char	*line;
+
+	if (argc || argv)
+		;
+	fd = open(argv[1], O_RDONLY);
+	while (get_next_line(fd, &line) == 1)
+		printf("%s\n", line);
+	close(fd);
+	return (0);
 }
+
