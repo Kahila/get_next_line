@@ -6,11 +6,12 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/06 16:53:48 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/06 22:57:11 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+//#include <stdio.h>
 
 int			get_next_line(const int fd, char **line)
 {
@@ -18,28 +19,31 @@ int			get_next_line(const int fd, char **line)
 	char buff[BUFF_SIZE + 1];
 	char *new;
 	int i;
-	int t = 0;
  	int f = 0;
 	int s = 0;
+    int w = 0;
+    i = 0;
 
-	i = 0;
+    if (fd <  0 || line == NULL)
+        return (INVALID);
     ft_bzero(buff, BUFF_SIZE + 1);
 	if (var.j > 0){
-		new = ft_memalloc(sizeof(char) * var.j);
-        if (!new)
-            return (-1);
-		
+		new = ft_memalloc(sizeof(char) * (var.j + 1));
+	    if (!new)
+            return (INVALID);
 		s = ft_strlen(var.temp) - var.j;
-		f = s;	
-		while (var.temp[s] != '\0' && i != var.j)
+		f = s;
+        w = var.j;
+		while (var.temp[s] != '\0')
 		{
 			if (var.temp[s] == '\n')
 			{
-				if(!(*line = ft_memalloc(sizeof(char) * i)))
-                    return (-1);
-				*line = ft_strncpy(*line, new, i - 1);
+				if(!(*line = ft_memalloc(sizeof(char) * (i + 1))))
+                    return (INVALID);
+				*line = ft_strncpy(*line, new, i);
 				var.j--;
-				return (1);
+                free(new);
+				return (LINE_FOUND);
 			}
 			new[i] = var.temp[s];
 			s++;
@@ -47,20 +51,15 @@ int			get_next_line(const int fd, char **line)
 			i++;
 		}
 		s = f;
-		if(!(*line = (char *)malloc(sizeof(char) * (i + var.j))))
-            return (-1);
-		while (var.temp[s] != '\0' && t != var.j)
-		{
-			line[0][t] = new[t];
-			t++;
-		}
+        var.temp = ft_strdup(new);
 	}
 	i = 0;
-	var.temp = ft_strnew(BUFF_SIZE);
+    if (w == 0)
+	    var.temp = ft_strnew(BUFF_SIZE);
 	f = read(fd, buff, BUFF_SIZE);
 	if (f == 0)
-		return (0);
-	var.temp = ft_strcpy(var.temp, buff);;
+		return (LINE_NOT_FOUND);
+	var.temp = ft_strjoin(var.temp, buff);
 	while (f > 0)
 	{
 		if (buff[i] == '\n')
@@ -72,10 +71,10 @@ int			get_next_line(const int fd, char **line)
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
             {
-				return (0);
+				return (LINE_NOT_FOUND);
             }
 			var.temp = ft_strjoin(var.temp, buff);
-			i = -1;
+			i = 0;
 		}
 		i++;
 	}
@@ -87,12 +86,11 @@ int			get_next_line(const int fd, char **line)
 			i++;
 	}
 	i++;
-
 	if(var.j == 0)
-		*line = (char *)malloc(sizeof(char) * i);
+		*line = (char *)malloc(sizeof(char) * (i + 1));
 	*line = ft_strncat(*line, var.temp, i - 1);
 	var.j = ft_strlen(var.temp) - i;
-	return (1);
+	return (LINE_FOUND);
 }
 
 #include <stdio.h>
@@ -104,27 +102,31 @@ int			get_next_line(const int fd, char **line)
 	int x = 1;
 	int j = 0;
 	
-	i = open("bible.txt", O_RDONLY);
-//	while (j < 10)
+	i = open("file.txt", O_RDONLY);
+	while (j < 9)
 	{
-		x = get_next_line(1, &txt);
-        printf("%x\n", x);
+		x = get_next_line(i, &txt);
+        printf("%s\n", txt);
         j++;
 	}
    // free(txt);
 	return (0);
 }*/
-int		main(int argc, char **argv)
+
+/*int		main(int argc, char **argv)
 {
 	int		fd;
 	char	*line;
+    int x = 0;
 
-	if (argc || argv)
-		;
-	fd = open(argv[1], O_RDONLY);
-	while (get_next_line(fd, &line) == 1)
-		printf("%s\n", line);
-	close(fd);
+    if (argc > 1)
+    {
+	    fd = open(argv[1], O_RDONLY);
+    	while ((x = get_next_line(fd, &line)) == 1)
+		    printf("%s\n", line);
+	    close(fd);
+        printf("%s\n", line);
+    }
 	return (0);
 }
-
+*/
