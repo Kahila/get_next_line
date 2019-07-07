@@ -6,12 +6,34 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/06 22:57:11 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/07 15:30:31 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-//#include <stdio.h>
+#include <stdio.h>
+
+static char      *read_line(int f, int fd, char *buff, char *temp)
+{
+    int i;
+
+    i = 0;
+	while (f > 0)
+	{
+		if (buff[i] == '\n')
+			break;
+		if (i == BUFF_SIZE)
+		{
+			f = read(fd, buff, BUFF_SIZE);
+			if (f == 0)
+				return (LINE_NOT_FOUND);
+			temp = ft_strjoin(temp, buff);
+			i = 0;
+		}
+		i++;
+	}
+    return (temp);
+}
 
 int			get_next_line(const int fd, char **line)
 {
@@ -53,43 +75,24 @@ int			get_next_line(const int fd, char **line)
 		s = f;
         var.temp = ft_strdup(new);
 	}
-	i = 0;
     if (w == 0)
 	    var.temp = ft_strnew(BUFF_SIZE);
 	f = read(fd, buff, BUFF_SIZE);
 	if (f == 0)
 		return (LINE_NOT_FOUND);
 	var.temp = ft_strjoin(var.temp, buff);
-	while (f > 0)
+    var.temp = read_line(f, fd, buff, var.temp);//function call 
+	s = 0;
+	if (var.temp[s])
 	{
-		if (buff[i] == '\n')
-		{
-			break;
-		}
-		if (i == BUFF_SIZE)
-		{
-			f = read(fd, buff, BUFF_SIZE);
-			if (f == 0)
-            {
-				return (LINE_NOT_FOUND);
-            }
-			var.temp = ft_strjoin(var.temp, buff);
-			i = 0;
-		}
-		i++;
+		while (var.temp[s] != '\n')
+			s++;
 	}
-
-	i = 0;
-	if (var.temp[i])
-	{
-		while (var.temp[i] != '\n')
-			i++;
-	}
-	i++;
+	s++;
 	if(var.j == 0)
-		*line = (char *)malloc(sizeof(char) * (i + 1));
-	*line = ft_strncat(*line, var.temp, i - 1);
-	var.j = ft_strlen(var.temp) - i;
+		*line = (char *)malloc(sizeof(char) * (s + 1));
+	*line = ft_strncat(*line, var.temp, s - 1);
+	var.j = ft_strlen(var.temp) - s;
 	return (LINE_FOUND);
 }
 
@@ -103,7 +106,7 @@ int			get_next_line(const int fd, char **line)
 	int j = 0;
 	
 	i = open("file.txt", O_RDONLY);
-	while (j < 9)
+	while (j < 12)
 	{
 		x = get_next_line(i, &txt);
         printf("%s\n", txt);
@@ -112,8 +115,7 @@ int			get_next_line(const int fd, char **line)
    // free(txt);
 	return (0);
 }*/
-
-/*int		main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	int		fd;
 	char	*line;
@@ -125,8 +127,7 @@ int			get_next_line(const int fd, char **line)
     	while ((x = get_next_line(fd, &line)) == 1)
 		    printf("%s\n", line);
 	    close(fd);
-        printf("%s\n", line);
     }
+ //   free(line);
 	return (0);
 }
-*/
