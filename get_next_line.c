@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/08 07:12:11 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/08 14:42:35 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,27 @@
 static char      *read_line(int f, int fd, char *buff, char *temp)
 {
     int i;
-
+//	printf("in read f = %d\n", f);
     i = 0;
 	while (f > 0)
 	{
-		if (buff[i] == '\n')
+		if (buff[i] == '\n'){
+//			printf("found line %d\n", i);
 			break;
-		if (i == BUFF_SIZE)
+		}
+		else if (i == BUFF_SIZE)
 		{
+		//	printf("loop %d\n", i);
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
-				return (LINE_NOT_FOUND);
+			{
+//				printf("done reading ------------ %s\n", temp);
+				if (BUFF_SIZE == 1)
+					return (temp);		
+				return ((char *)LINE_NOT_FOUND);
+			}
 			temp = ft_strjoin(temp, buff);
-			i = 0;
+			i = -1;
 		}
 		i++;
 	}
@@ -48,7 +56,8 @@ int			get_next_line(const int fd, char **line)
     if (fd <  0 || line == NULL)
         return (INVALID);
     ft_bzero(buff, BUFF_SIZE + 1);
-	if (var.j > 0){
+	if (var.j > 0)
+	{
 		new = ft_memalloc(sizeof(char) * (var.j + 1));
 	    if (!new)
             return (INVALID);
@@ -57,30 +66,34 @@ int			get_next_line(const int fd, char **line)
         w = var.j;
 		while (var.temp[s] != '\0')
 		{
+			new[i] = var.temp[s];
 			if (var.temp[s] == '\n')
 			{
 				if(!(*line = ft_memalloc(sizeof(char) * (i + 1))))
                     return (INVALID);
 				*line = ft_strncpy(*line, new, i);
 				var.j--;
-                free(new);
+             //  free(new);
 				return (LINE_FOUND);
 			}
-			new[i] = var.temp[s];
+			//new[i] = var.temp[s];
 			s++;
 			var.j--;
 			i++;
 		}
 		s = f;
         var.temp = ft_strdup(new);
-	}
+	}//first read after this loop
     if (w == 0)
 	    var.temp = ft_strnew(BUFF_SIZE);
 	f = read(fd, buff, BUFF_SIZE);
 	if (f == 0)
 		return (LINE_NOT_FOUND);
 	var.temp = ft_strjoin(var.temp, buff);
+//	printf("---------- %d", f);
     var.temp = read_line(f, fd, buff, var.temp);//function call 
+	if (var.temp == (char *)LINE_NOT_FOUND)
+		return (0);
 	s = 0;
 	if (var.temp[s])
 	{
@@ -126,7 +139,7 @@ int			get_next_line(const int fd, char **line)
      while (x == 1)
      {
          x = get_next_line(fd, &line);
-         printf("%d\n", x);
+        printf("%s\n", line);
      }
      close(fd);
      }
