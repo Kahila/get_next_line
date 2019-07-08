@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/08 14:42:35 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/08 14:48:26 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,18 @@
 static char      *read_line(int f, int fd, char *buff, char *temp)
 {
     int i;
-//	printf("in read f = %d\n", f);
-    i = 0;
+    
+	i = 0;
 	while (f > 0)
 	{
 		if (buff[i] == '\n'){
-//			printf("found line %d\n", i);
 			break;
 		}
 		else if (i == BUFF_SIZE)
 		{
-		//	printf("loop %d\n", i);
 			f = read(fd, buff, BUFF_SIZE);
 			if (f == 0)
 			{
-//				printf("done reading ------------ %s\n", temp);
 				if (BUFF_SIZE == 1)
 					return (temp);		
 				return ((char *)LINE_NOT_FOUND);
