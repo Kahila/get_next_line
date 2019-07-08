@@ -6,12 +6,11 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/07 15:30:31 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/08 07:12:11 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 static char      *read_line(int f, int fd, char *buff, char *temp)
 {
@@ -115,19 +114,21 @@ int			get_next_line(const int fd, char **line)
    // free(txt);
 	return (0);
 }*/
-int		main(int argc, char **argv)
-{
-	int		fd;
-	char	*line;
-    int x = 0;
-
-    if (argc > 1)
-    {
-	    fd = open(argv[1], O_RDONLY);
-    	while ((x = get_next_line(fd, &line)) == 1)
-		    printf("%s\n", line);
-	    close(fd);
-    }
- //   free(line);
-	return (0);
-}
+ int     main(int argc, char **argv)
+ {
+     int     fd;
+     char    *line;
+     int     x = 1;
+ 
+     //if (argc > 1)
+     {
+     fd = open(argv[1], O_RDONLY);
+     while (x == 1)
+     {
+         x = get_next_line(fd, &line);
+         printf("%d\n", x);
+     }
+     close(fd);
+     }
+     return (0);
+ }
