@@ -6,7 +6,7 @@
 /*   By: mbaloyi <mbaloyi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/10 15:24:13 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/10 15:45:04 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,14 @@ static char      *read_line(int f, int fd, char *buff, char *temp)
 	return (temp);
 }
 
-int		check(char **line, char *new, int i, t_var var){
+int		check(char **line, char *new, int i){
 	if(!(*line = ft_memalloc(sizeof(char) * (i + 1))))
 		return (INVALID);
 	*line = ft_strncpy(*line, new, i);
 	return (LINE_FOUND);
 }
 
-int		gnl(int fd, char **line, int i, int s, char *new){
+int				gnl(int fd, char **line, int i, int s, char *new){
 	static t_var var;
 	char buff[BUFF_SIZE + 1];
 
@@ -60,14 +60,13 @@ int		gnl(int fd, char **line, int i, int s, char *new){
 			new[i] = var.temp[s];
 			if (var.temp[s++] == '\n')
 				if(var.j--)
-					return check(line,new,i,var);
+					return check(line,new,i);
 			i++;
 			var.j--;
 		}
 		var.temp = ft_strdup(new);
 	}
-	if (i == 0)
-		var.temp = ft_strnew(BUFF_SIZE);;
+	if (i == 0 && (var.temp = ft_strnew(BUFF_SIZE)))
 	if ((i = read(fd, buff, BUFF_SIZE)) == 0)
 		return (LINE_NOT_FOUND);
 	var.temp = ft_strjoin(var.temp, buff);
@@ -77,8 +76,7 @@ int		gnl(int fd, char **line, int i, int s, char *new){
 		while (var.temp[s] != '\n')
 			s++;
 	s++;
-	if(var.j == 0)
-		*line = (char *)malloc(sizeof(char) * (s + 1));
+	if(var.j == 0 && (*line = (char *)malloc(sizeof(char) * (s + 1))))
 	*line = ft_strncat(*line, var.temp, s - 1);
 	var.j = ft_strlen(var.temp) - s;
 	return (LINE_FOUND);
@@ -90,7 +88,9 @@ int			get_next_line(const int fd, char **line)
 	int i;  
 	int s ;
 
-	i = 0; 
+	i = 0;
+   	new	= NULL;
+	s = 0;
 	if (fd <  0 || line == NULL)
 		return (INVALID);
 	return gnl(fd,line,i,s, new);
