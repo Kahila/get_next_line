@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mbaloyi <mbaloyi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/08 14:48:26 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/10 15:24:13 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static char      *read_line(int f, int fd, char *buff, char *temp)
 {
-    int i;
-    
+	int i;
+
 	i = 0;
 	while (f > 0)
 	{
@@ -36,67 +36,46 @@ static char      *read_line(int f, int fd, char *buff, char *temp)
 		}
 		i++;
 	}
-    return (temp);
+	return (temp);
 }
 
-int			get_next_line(const int fd, char **line)
-{
+int		check(char **line, char *new, int i, t_var var){
+	if(!(*line = ft_memalloc(sizeof(char) * (i + 1))))
+		return (INVALID);
+	*line = ft_strncpy(*line, new, i);
+	return (LINE_FOUND);
+}
+
+int		gnl(int fd, char **line, int i, int s, char *new){
 	static t_var var;
 	char buff[BUFF_SIZE + 1];
-	char *new;
-	int i;
- 	int f = 0;
-	int s = 0;
-    int w = 0;
-    i = 0;
 
-    if (fd <  0 || line == NULL)
-        return (INVALID);
-    ft_bzero(buff, BUFF_SIZE + 1);
+	ft_bzero(buff, BUFF_SIZE + 1);
 	if (var.j > 0)
 	{
-		new = ft_memalloc(sizeof(char) * (var.j + 1));
-	    if (!new)
-            return (INVALID);
-		s = ft_strlen(var.temp) - var.j;
-		f = s;
-        w = var.j;
-		while (var.temp[s] != '\0')
+		if (!(new = ft_memalloc(sizeof(char) * (var.j + 1))))
+			return (INVALID);	
+		while (var.temp[(s = ft_strlen(var.temp) - var.j)] != '\0' )
 		{
 			new[i] = var.temp[s];
-			if (var.temp[s] == '\n')
-			{
-				if(!(*line = ft_memalloc(sizeof(char) * (i + 1))))
-                    return (INVALID);
-				*line = ft_strncpy(*line, new, i);
-				var.j--;
-             //  free(new);
-				return (LINE_FOUND);
-			}
-			//new[i] = var.temp[s];
-			s++;
-			var.j--;
+			if (var.temp[s++] == '\n')
+				if(var.j--)
+					return check(line,new,i,var);
 			i++;
+			var.j--;
 		}
-		s = f;
-        var.temp = ft_strdup(new);
-	}//first read after this loop
-    if (w == 0)
-	    var.temp = ft_strnew(BUFF_SIZE);
-	f = read(fd, buff, BUFF_SIZE);
-	if (f == 0)
+		var.temp = ft_strdup(new);
+	}
+	if (i == 0)
+		var.temp = ft_strnew(BUFF_SIZE);;
+	if ((i = read(fd, buff, BUFF_SIZE)) == 0)
 		return (LINE_NOT_FOUND);
 	var.temp = ft_strjoin(var.temp, buff);
-//	printf("---------- %d", f);
-    var.temp = read_line(f, fd, buff, var.temp);//function call 
-	if (var.temp == (char *)LINE_NOT_FOUND)
+	if ((var.temp = read_line(i, fd, buff, var.temp)) == (char *)LINE_NOT_FOUND)
 		return (0);
-	s = 0;
-	if (var.temp[s])
-	{
+	if (var.temp[(s = 0)])
 		while (var.temp[s] != '\n')
 			s++;
-	}
 	s++;
 	if(var.j == 0)
 		*line = (char *)malloc(sizeof(char) * (s + 1));
@@ -105,40 +84,36 @@ int			get_next_line(const int fd, char **line)
 	return (LINE_FOUND);
 }
 
+int			get_next_line(const int fd, char **line)
+{
+	char *new;
+	int i;  
+	int s ;
+
+	i = 0; 
+	if (fd <  0 || line == NULL)
+		return (INVALID);
+	return gnl(fd,line,i,s, new);
+}
+
 #include <stdio.h>
 #include <fcntl.h>
-/*int main()
+int     main(int argc, char **argv)
 {
-	char *txt;
-	int i;
-	int x = 1;
-	int j = 0;
-	
-	i = open("file.txt", O_RDONLY);
-	while (j < 12)
+	int     fd;
+	char    *line;
+	int     x = 1;
+
+	if (argc > 1)
 	{
-		x = get_next_line(i, &txt);
-        printf("%s\n", txt);
-        j++;
+		fd = open(argv[1], O_RDONLY);
+		while (x == 1)
+		{
+			x = get_next_line(fd, &line);
+			if (x > 0)
+			printf("%s\n", line);
+		}
+		close(fd);
 	}
-   // free(txt);
 	return (0);
-}*/
- int     main(int argc, char **argv)
- {
-     int     fd;
-     char    *line;
-     int     x = 1;
- 
-     //if (argc > 1)
-     {
-     fd = open(argv[1], O_RDONLY);
-     while (x == 1)
-     {
-         x = get_next_line(fd, &line);
-        printf("%s\n", line);
-     }
-     close(fd);
-     }
-     return (0);
- }
+}
