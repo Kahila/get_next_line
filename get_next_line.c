@@ -6,7 +6,7 @@
 /*   By: mbaloyi <mbaloyi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/11 05:28:12 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/11 05:46:07 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int         check(char ***line, t_var *var, int s)
         new[w] = var->temp[s];
         if (var->temp[s] == '\n')
         {
-            if(var->j--)
+            if (var->j--)
                 **line = ft_memalloc(sizeof(char) * (w + 1));
             **line = ft_strncpy(**line, new, w);
             return (0);
@@ -85,7 +85,7 @@ int				gnl(int fd, char **line, int i, int s, char *buff){
         while (var.temp[s] != '\n')
             s++;
     s++;
-    if(var.j == 0 && (*line = (char *)malloc(sizeof(char) * (s + 1))))
+    if (var.j == 0 && (*line = (char *)malloc(sizeof(char) * (s + 1))))
         *line = ft_strncat(*line, var.temp, s - 1);
     var.j = ft_strlen(var.temp) - s;
     return (LINE_FOUND);
@@ -102,7 +102,7 @@ int			get_next_line(const int fd, char **line)
     ft_bzero(buff, BUFF_SIZE + 1);
     if (fd <  0 || line == NULL)
         return (INVALID);
-    return gnl(fd,line,i,s, buff);
+    return gnl(fd, line, i, s, buff);
 }
 
 #include <stdio.h>
