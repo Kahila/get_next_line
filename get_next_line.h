@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 16:00:34 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/06 14:39:42 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/11 04:28:52 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 # include <stdlib.h>
 # include <sys/stat.h>
 # define BUFF_SIZE 100
-# include "libft.h"
-
+# include "libft/libft.h"
+#include <stdio.h>
 enum		return_code
 {
 	LINE_NOT_FOUND,
