@@ -6,7 +6,7 @@
 /*   By: mbaloyi <mbaloyi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/24 12:51:47 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/11 05:12:12 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/11 05:28:12 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int         check(char ***line, t_var *var, int s)
         if (var->temp[s] == '\n')
         {
             if(var->j--)
-            **line = ft_memalloc(sizeof(char) * (w + 1));
+                **line = ft_memalloc(sizeof(char) * (w + 1));
             **line = ft_strncpy(**line, new, w);
             return (0);
         }
@@ -65,25 +65,22 @@ int         check(char ***line, t_var *var, int s)
     return (w);
 }
 
-int				gnl(int fd, char **line, int i, int s){
+int				gnl(int fd, char **line, int i, int s, char *buff){
     static t_var var;
-    char buff[BUFF_SIZE + 1];
 
-    i = 0;
-    ft_bzero(buff, BUFF_SIZE + 1);
     if (var.j > 0)
     {
         i = check(&line, &var ,s);
         if (i == 0)
-            return (1);
+            return (LINE_FOUND);
     }
-    if (i == 0 )
-        var.temp = ft_memalloc(BUFF_SIZE  + 1);
+    if (i == 0)
+        var.temp = ft_memalloc(sizeof(char) * (BUFF_SIZE  + 1));
     if ((i = read(fd, buff, BUFF_SIZE)) == 0)
         return (LINE_NOT_FOUND);
     var.temp = ft_strjoin(var.temp, buff);
     if ((var.temp = read_line(i, fd, buff, var.temp)) == (char *)LINE_NOT_FOUND)
-        return (0);
+        return (LINE_NOT_FOUND);
     if (var.temp[(s = 0)])
         while (var.temp[s] != '\n')
             s++;
@@ -98,12 +95,14 @@ int			get_next_line(const int fd, char **line)
 {
     int i;  
     int s ;
+    char buff[BUFF_SIZE + 1];
 
     i = 0;
     s = 0;
+    ft_bzero(buff, BUFF_SIZE + 1);
     if (fd <  0 || line == NULL)
         return (INVALID);
-    return gnl(fd,line,i,s);
+    return gnl(fd,line,i,s, buff);
 }
 
 #include <stdio.h>
