@@ -6,22 +6,21 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 11:18:19 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/11 05:50:23 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/12 13:48:43 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char      *read_line(int f, int fd, char *buff, char *temp)
+static char      *read_line(ssize_t f, int fd, char *buff, char *temp)
 {
     int i;
 
     i = 0;
     while (f > 0)
     {
-        if (buff[i] == '\n'){
+        if (buff[i] == '\n')
             break;
-        }
         else if (i == BUFF_SIZE)
         {
             f = read(fd, buff, BUFF_SIZE);
@@ -41,19 +40,19 @@ static char      *read_line(int f, int fd, char *buff, char *temp)
 
 int         check(char ***line, t_var *var, int s)
 {
-    char *new;
-    int w;
-
+    char new[sizeof(char) * (var->j +1)];
+    ssize_t w;
     w = 0;
+
     s = ft_strlen(var->temp) - var->j;
-    new = ft_memalloc(sizeof(char) * (var->j + 1));
-    while (var->temp[s] != '\0' )
+    ft_bzero(new, var->j + 1);
+    while (var->temp[s] != '\0')
     {
         new[w] = var->temp[s];
         if (var->temp[s] == '\n')
         {
             if (var->j--)
-                **line = ft_memalloc(sizeof(char) * (w + 1));
+				**line = ft_memalloc(sizeof(char) * (w + 1));
             **line = ft_strncpy(**line, new, w);
             return (0);
         }
@@ -61,11 +60,13 @@ int         check(char ***line, t_var *var, int s)
         w++;
         var->j--;
     }
+	free(var->temp);
     var->temp = ft_strdup(new);
     return (w);
 }
 
-int				gnl(int fd, char **line, int i, int s, char *buff){
+int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
+{
     static t_var var;
 
     if (var.j > 0)
@@ -77,7 +78,10 @@ int				gnl(int fd, char **line, int i, int s, char *buff){
     if (i == 0)
         var.temp = ft_memalloc(sizeof(char) * (BUFF_SIZE  + 1));
     if ((i = read(fd, buff, BUFF_SIZE)) == 0)
+	{
+		free(var.temp);
         return (LINE_NOT_FOUND);
+	}
     var.temp = ft_strjoin(var.temp, buff);
     if ((var.temp = read_line(i, fd, buff, var.temp)) == (char *)LINE_NOT_FOUND)
         return (LINE_NOT_FOUND);
@@ -93,7 +97,7 @@ int				gnl(int fd, char **line, int i, int s, char *buff){
 
 int			get_next_line(const int fd, char **line)
 {
-    int i;  
+    ssize_t i;  
     int s ;
     char buff[BUFF_SIZE + 1];
 
@@ -112,17 +116,27 @@ int     main(int argc, char **argv)
     int     fd;
     char    *line;
     int     x = 1;
-
+	int		time = 101;
     if (argc > 1)
     {
         fd = open(argv[1], O_RDONLY);
-        while (x == 1)
+       while (x == 1)
         {
+			/*if (time < 1)
+			{
+				while (1)
+				{
+				}
+			}*/
             x = get_next_line(fd, &line);
             if (x > 0)
                 printf("%s\n", line);
+			//time--;
         }
+		free(line);
         close(fd);
     }
+	while (1)
+	{}
     return (0);
 }
