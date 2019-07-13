@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 11:18:19 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/12 15:42:02 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/13 05:59:42 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,9 @@ static char      *read_line(ssize_t f, int fd, char *buff, char *temp)
             if (f == 0)
                 return ((char *)LINE_NOT_FOUND);
 			tmp = temp;
-            tmp = ft_strjoin(temp, buff);
-			if (temp)
-				free(temp);
-			temp = tmp;
+            temp = ft_strjoin(temp, buff);
+			if (tmp)
+				free(tmp);
             i = -1;
         }
         i++;
@@ -39,10 +38,11 @@ static char      *read_line(ssize_t f, int fd, char *buff, char *temp)
     return (temp);
 }
 
-int         check(char **line, t_var *var, int s)
+static int         check(char **line, t_var *var, int s)
 {
   	char *new;
     ssize_t w;
+    
     w = 0;
 	if (*line)
 		free(*line);
@@ -54,7 +54,7 @@ int         check(char **line, t_var *var, int s)
         if (var->temp[s] == '\n')
         {
             if (var->j--)
-				*line = ft_memalloc(sizeof(char) * (w + 1));
+			    *line = ft_memalloc(sizeof(char) * (w + 1));
             *line = ft_strncpy(*line, new, w);
 			free(new);
             return (0);
@@ -69,7 +69,7 @@ int         check(char **line, t_var *var, int s)
     return (w);
 }
 
-int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
+static int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
 {
     static t_var var;
 	char *v;
@@ -87,16 +87,19 @@ int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
         var.temp = ft_memalloc(sizeof(char) * (BUFF_SIZE  + 1));
 	}
     if ((i = read(fd, buff, BUFF_SIZE)) == 0)
+    {
+        free(var.temp);
         return (LINE_NOT_FOUND);
+    }
 	v = var.temp;
-    var.temp = ft_strjoin(v, buff);
+    var.temp = ft_strjoin(var.temp, buff);
 	free(v);
     if ((var.temp = read_line(i, fd, buff, var.temp)) == (char *)LINE_NOT_FOUND)
         return (LINE_NOT_FOUND);
     if (var.temp[(s = 0)])
         while (var.temp[s] != '\n')
             s++;
-	if (*line && var.j > 0)
+	if (*line && var.j == 0)
 		free(*line);
     if (var.j == 0 && (*line = ft_memalloc(sizeof(char) * (++s + 1))))
         *line = ft_strncat(*line, var.temp, s - 1);
@@ -112,8 +115,10 @@ int			get_next_line(const int fd, char **line)
 
     i = 0;
     s = 0;
+
+    *line = NULL;
     ft_bzero(buff, BUFF_SIZE + 1);
-    if (fd <  0 || line == NULL)
+    if (fd <  0)
         return (INVALID);
     return gnl(fd, line, i, s, buff);
 }
@@ -136,12 +141,14 @@ int     main(int argc, char **argv)
 			{
                 printf("%s\n", line);
 			//	free(line);
-			}//time--;
+			//time--;
+            if (*line)
+                free(line);
+            }
         }
-		free(line);
+	//if (*line)
+        free(line);
         close(fd);
     }
-	while (1)
-	{}
     return (0);
 }
