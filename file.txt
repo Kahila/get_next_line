@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    file.txt                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2019/07/13 11:50:37 by akalombo          #+#    #+#              #
+#    Updated: 2019/07/13 11:50:41 by akalombo         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 1 - Our deepest fear is not that we are inadequate.
 2 - Our deepest fear is that we are powerful beyond measure.
 3 - It is our light, not our darkness that most frightens us.
