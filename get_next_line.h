@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 16:00:34 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/13 11:44:34 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/13 11:47:59 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,6 @@
 # include <sys/stat.h>
 # define BUFF_SIZE 128
 # include "libft/libft.h"
-
-#define VT var.temp
-#define M ft_memalloc
 
 enum				e_return_code
 {
