@@ -6,7 +6,7 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/07/05 11:18:19 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/13 05:59:42 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/13 06:44:00 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int         check(char **line, t_var *var, int s)
 {
   	char *new;
     ssize_t w;
-    
+
     w = 0;
 	if (*line)
 		free(*line);
@@ -51,15 +51,13 @@ static int         check(char **line, t_var *var, int s)
     while (var->temp[s] != '\0')
     {
         new[w] = var->temp[s];
-        if (var->temp[s] == '\n')
+        if (var->temp[s++] == '\n')
         {
-            if (var->j--)
-			    *line = ft_memalloc(sizeof(char) * (w + 1));
-            *line = ft_strncpy(*line, new, w);
+            if (var->j-- && (*line = ft_memalloc(sizeof(char) * (w + 1))))
+                *line = ft_strncpy(*line, new, w);
 			free(new);
             return (0);
         }
-        s++;
         w++;
         var->j--;
     }
@@ -75,15 +73,11 @@ static int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
 	char *v;
 
     if (var.j > 0)
-    {
-        i = check(line, &var ,s);
-        if (i == 0)
+        if ((i = check(line, &var ,s)) == 0)
             return (LINE_FOUND);
-    }
-    if (i == 0)
+    if (i == 0 || (i == 0 && var.temp))
 	{
-		if (var.temp)
-			free(var.temp);
+		free(var.temp);
         var.temp = ft_memalloc(sizeof(char) * (BUFF_SIZE  + 1));
 	}
     if ((i = read(fd, buff, BUFF_SIZE)) == 0)
@@ -99,8 +93,6 @@ static int				gnl(int fd, char **line, ssize_t i, int s, char *buff)
     if (var.temp[(s = 0)])
         while (var.temp[s] != '\n')
             s++;
-	if (*line && var.j == 0)
-		free(*line);
     if (var.j == 0 && (*line = ft_memalloc(sizeof(char) * (++s + 1))))
         *line = ft_strncat(*line, var.temp, s - 1);
     var.j = ft_strlen(var.temp) - s;
@@ -123,7 +115,6 @@ int			get_next_line(const int fd, char **line)
     return gnl(fd, line, i, s, buff);
 }
 
-#include <stdio.h>
 #include <fcntl.h>
 int     main(int argc, char **argv)
 {
@@ -140,13 +131,10 @@ int     main(int argc, char **argv)
             if (x > 0)
 			{
                 printf("%s\n", line);
-			//	free(line);
-			//time--;
             if (*line)
                 free(line);
             }
         }
-	//if (*line)
         free(line);
         close(fd);
     }
