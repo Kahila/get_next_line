@@ -6,26 +6,30 @@
 /*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/28 16:00:34 by akalombo          #+#    #+#             */
-/*   Updated: 2019/06/30 11:38:20 by akalombo         ###   ########.fr       */
+/*   Updated: 2019/07/16 18:00:33 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
-#define GET_NEXT_LINE_H
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-# define BUFF_SIZE 10
-#include "libft.h"
+# define GET_NEXT_LINE_H
+# include <sys/types.h>
+# include <sys/uio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <sys/stat.h>
+# define BUFF_SIZE 1
+# include "libft/libft.h"
 
-enum		error_code
+enum				e_return_code
 {
 	LINE_NOT_FOUND,
 	LINE_FOUND,
 	INVALID = -1
 };
-
-int			get_next_line(const int fd, char **line);
+typedef struct		s_var
+{
+	char	*temp;
+	ssize_t		j;
+}					t_var;
+int					get_next_line(const int fd, char **line);
 #endif
