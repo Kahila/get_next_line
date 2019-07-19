@@ -1,86 +1,58 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akalombo <akalombo@42.fr>                  +#+  +:+       +#+        */
+/*   By: akalombo <akalombo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/07/16 06:33:11 by akalombo          #+#    #+#             */
-/*   Updated: 2019/07/16 18:33:57 by akalombo         ###   ########.fr       */
+/*   Created: 2019/07/05 11:18:19 by akalombo          #+#    #+#             */
+/*   Updated: 2019/07/19 06:45:16 by akalombo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	        *ft_join(char *buff, char *tmp)
+static char		*read_line(char **lines, char *tmp)
 {
-    size_t	i;
-    t_var	var;
+    t_var       var;
 
-    i = 0;
     var.j = 0;
-    if (buff)
-        i = ft_strlen(buff);
-    if (tmp)
-        var.j = ft_strlen(tmp);
-    var.temp = (char *)malloc(sizeof(char) * (i + var.j + 1));
-    ft_memcpy(var.temp, buff, i);
-    ft_memcpy(var.temp + i, tmp, var.j);
-    var.temp[i + var.j] = '\0';
-    return (var.temp);
-}
-
-static int	find_line(char *buff)
-{
-    int		i;
-
-    i = 0;
-    while (buff[i] != '\n' && buff[i] != '\0')
-        i++;
-    if (buff[i] == '\n')
+    while (tmp[var.j] != '\0' && tmp[var.j] != '\n')
+        var.j++;
+    *lines = ft_strsub(tmp, 0, var.j);
+    if (ft_strcmp(*lines, tmp) == 0)
+        tmp = NULL;
+    else
     {
-        buff[i] = '\0';
-        return (i);
+        var.temp = tmp;
+        tmp = ft_strsub(tmp, var.j + 1, ft_strlen(tmp + var.j + 1));
+        free(var.temp);
     }
-    return (INVALID);
+    return (tmp);
 }
 
-static int	save_line(char **buff, char **tmp, char **line)
+int				get_next_line(const int fd, char **line)
 {
-    int		i;
+    static char	*s_line[1024];
+    char		character[BUFF_SIZE + 1];
+    t_var       var;
 
-    *buff = ft_join(*buff, *tmp);
-    i = find_line(*buff);
-    if (i > -1)
-    {
-        *line = ft_strdup(*buff);
-        *buff = ft_strdup(*buff + i + 1);
-        return (LINE_FOUND);
-    }
-    return (LINE_NOT_FOUND);
-}
-
-int			get_next_line(int const fd, char **line)
-{
-    static char *buff[BUFF_SIZE];
-    t_var       var;  
-
-    var.temp = ft_strnew(BUFF_SIZE);
-    if (!line || BUFF_SIZE <= 0 || fd < 0 || (read(fd, var.temp, 0)) < 0)
+    if (fd < 0 || !line || read(fd, character, 0) < 0)
         return (INVALID);
-    while ((read(fd, var.temp, BUFF_SIZE)) > 0)
+    if (!s_line[fd])
+        s_line[fd] = ft_strnew(BUFF_SIZE);
+    while ((var.j = read(fd, character, BUFF_SIZE)) > 0)
     {
-        var.j = save_line(&buff[fd], &var.temp, line);
-        if (var.j == 1)
-            return (LINE_FOUND);
+        character[var.j] = '\0';
+        var.temp = ft_strjoin(s_line[fd], character);
+        free(s_line[fd]);
+        s_line[fd] = var.temp;
+        if (ft_strchr(s_line[fd], '\n'))
+            break ;
     }
-    if ((var.j = save_line(&buff[fd], &var.temp, line) > 0))
-        return (LINE_FOUND);
-    else if (ft_strlen(buff[fd]) > 0)
-    {
-        *line = ft_strdup(buff[fd]);
-        ft_strdel(&buff[fd]);
-        return (LINE_FOUND);
-    }
-    return (var.j);
+    if ((var.j < BUFF_SIZE) && !ft_strlen(s_line[fd]))
+        return (LINE_NOT_FOUND);
+    s_line[fd] = read_line(line, s_line[fd]);
+    return (LINE_FOUND);
 }
+
